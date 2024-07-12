@@ -16,7 +16,10 @@ public class MedicoConConsulta implements ValidadorDeConsultas {
 
         if (datos.idMedico() == null) return;
 
-        var medicoConConsulta = consultaRepository.existsByMedicoIdAndFecha(datos.idMedico(), datos.fecha());
+        var horarioMinimo = datos.fecha().minusHours(1).plusMinutes(1);
+        var horarioMaximo = datos.fecha().plusHours(1).minusMinutes(1);
+
+        var medicoConConsulta = consultaRepository.existsByMedicoIdAndFechaBetween(datos.idMedico(), horarioMinimo, horarioMaximo);
 
         if (medicoConConsulta)
             throw new ValidationException("No permitir programar una cita con un médico que ya tiene otra cita programada en la misma fecha/hora");
